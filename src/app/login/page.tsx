@@ -23,11 +23,11 @@ export default function Login() {
       if (response.ok) {
         router.push('/');
       } else {
-        if (data.message==="Please verify your email before logging in") {
+        if (data.message === "Please verify your email before logging in") {
           const isGmail = email.toLowerCase().endsWith('@gmail.com');
           const verifyPath = isGmail ? '/verify?client=gmail' : '/verify';
           router.push(verifyPath);
-        }else {
+        } else {
           setError(data.message || 'Signup failed');
         }
       }

@@ -1,8 +1,9 @@
 "use client"
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function Verify() {
+function VerifyContent() {
   const searchParams = useSearchParams();
   const isGmail = searchParams.get('client') === 'gmail';
 
@@ -43,5 +44,13 @@ export default function Verify() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Verify() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <VerifyContent />
+    </Suspense>
   );
 }
