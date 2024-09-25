@@ -2,87 +2,41 @@
 
 import ProductCard from '@/components/product-card';
 import { useState, useEffect } from 'react';
-
-const dummyProducts: any[] = [
-  {
-    id: '1',
-    name: 'Smartphone X',
-    description: 'Latest model with advanced features',
-    price: 999.99,
-    categoryId: 'electronics',
-    imageUrl:"https://prd.place/400",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '2',
-    name: 'Designer Watch',
-    description: 'Elegant timepiece for all occasions',
-    price: 299.99,
-    categoryId: 'accessories',
-    imageUrl:"https://prd.place/400",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '3',
-    name: 'Wireless Earbuds',
-    description: 'High-quality sound with long battery life',
-    price: 149.99,
-    categoryId: 'electronics',
-    imageUrl:"https://prd.place/400",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '4',
-    name: 'Leather Backpack',
-    description: 'Stylish and durable for everyday use',
-    price: 79.99,
-    categoryId: 'accessories',
-    imageUrl:"https://prd.place/400",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '5',
-    name: 'Smart Home Hub',
-    description: 'Control your home with voice commands',
-    price: 129.99,
-    categoryId: 'electronics',
-    imageUrl:"https://prd.place/400",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-];
+import Loading from '../loading';
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState<any[]>(dummyProducts);
+  const [products, setProducts] = useState<any[]>([]);
+  const [showingProducts, setShowingProducts] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isLoading, setIsLoading]=useState(false);
 
-//   useEffect(() => {
-//     // Fetch products from API
-//     const fetchProducts = async () => {
-//       try {
-//         const response = await fetch('/api/products');
-//         if (response.ok) {
-//           const data = await response.json();
-//           setProducts(data);
-//         }
-//       } catch (error) {
-//         console.error('Error fetching products:', error);
-//       }
-//     };
+  useEffect(() => {
+    const fetchProducts = async () => {
+        setIsLoading(true)
+      try {
+        const response = await fetch('https://dotpotit-backend.vercel.app/api/products');
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data)
+          setProducts(data);
+          setShowingProducts(data)
+        }
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }finally{
+        setIsLoading(false)
+      }
+    };
 
-//     fetchProducts();
-//   }, []);
+    fetchProducts();
+  }, []);
 
   const handleSearch = () => {
-    const filteredProducts = dummyProducts.filter(product =>
+    const filteredProducts = products.filter((product) =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    setProducts(filteredProducts);
+    setShowingProducts(filteredProducts);
   };
 
   return (
@@ -106,10 +60,10 @@ export default function ProductsPage() {
           </button>
         </div>
       </div>
-
-      {products.length > 0 ? (
+    {isLoading ? <Loading/> : (
+      showingProducts.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {products.map((product) => (
+          {showingProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
@@ -118,7 +72,8 @@ export default function ProductsPage() {
           <p className="text-xl text-gray-600">No products found.</p>
           <p className="mt-2 text-gray-500">Try adjusting your search or check back later for new items.</p>
         </div>
-      )}
+      )
+    )}
     </div>
   );
 }
