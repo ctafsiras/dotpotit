@@ -21,6 +21,7 @@ export default function Login() {
       });
       const data = await response.json();
       if (response.ok) {
+        localStorage.setItem('token', data.token);
         router.push('/');
       } else {
         if (data.message === "Please verify your email before logging in") {
